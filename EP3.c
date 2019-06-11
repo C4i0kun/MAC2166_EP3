@@ -81,10 +81,11 @@ void entrada(int *m, int *n, int *z, int *seed) {
 }
 
 void novo_seed(int *seed) {
-    srand(*seed);
+    srand(*seed + 1);
     *seed = rand() % 12345 + 1;
 }
 
+/* Retorna numero entre 1 e o maximo de linhas, inclusive */
 int posicao_linha_aleatoria(int linhas, int *seed) {
     int numero = 0;
 
@@ -93,6 +94,7 @@ int posicao_linha_aleatoria(int linhas, int *seed) {
     return numero % linhas + 1;
 }
 
+/* Retorna numero entre 1 e o maximo de colunas, inclusive */
 int posicao_coluna_aleatoria(int linhas, int colunas, int *seed) {
     int numero = 0;
 
@@ -126,7 +128,36 @@ int numero_de_adjacentes(int N, int NE, int E, int SE, int S, int SW, int W, int
     return adjacentes;  
 }
 
+void borda_superior(int colunas) {
+    int contagem = 1;
+    printf("     ");
+    for(contagem = 1; contagem <= colunas; contagem++) {
+        printf("%3d", contagem);
+    }
+    printf("\n");
+    printf("    +");
+    for(contagem = 1; contagem <= colunas; contagem++) {
+        printf("---");
+    }
+    printf("-+\n");
 
+}
+
+/*
+       1  2  3  4  5  6  7  8  9 10 11 12
+    +------------------------------------
+  1 |  .  .  .  .  .  .  .  .  .  .  .  .
+  2 |
+  3 |
+  4 |
+  5 |
+  6 |
+  7 |
+  8 |
+  9 |
+ 10 |
+
+*/
 
 int main() {
     int m = 0; /*numero de linhas*/
@@ -146,7 +177,7 @@ int main() {
     int zero2 = 0;
     int zero3 = 0;
 
-    int count = 0;
+    int count = 1;
     int count2 = 0;
     int count3 = 0;
     /*********************/
@@ -169,25 +200,35 @@ int main() {
     while (count <= z) {
         int posicao_linha = posicao_linha_aleatoria(m, &seed);
         int posicao_coluna = posicao_coluna_aleatoria(m, n, &seed);
-        novo_seed(&seed);
-        tabuleiro[posicao_linha][posicao_coluna][0] = 1;
-        count++;
-    }
 
-    printf("\n");
-    for (count2 = 0; count2 < m; count2++) {
-        for (count3 = 0; count3 < n; count3++) {
-            printf("%d ", tabuleiro[count2][count3][0]);
-            if(count3 == (n-1)) {
-                printf("\n");
-            }
+        novo_seed(&seed);
+        if(tabuleiro[posicao_linha - 1][posicao_coluna - 1][0] != 1) {
+            tabuleiro[posicao_linha - 1][posicao_coluna - 1][0] = 1; 
+            count++;           
         }
     }
 
     /* O loop do jogo principal */
-    while(morto == 0 || N_casas_abertas < n * m - z) {
-        printf("Bem-vindo ao caca-Minas!");
+    printf("Bem-vindo ao caca-Minas!\n");
+    borda_superior(n);
 
+    for (count2 = 0; count2 < m; count2++) {
+        printf("%3d |", m);
+        for (count3 = 0; count3 < n; count3++) {
+            printf("%3d", tabuleiro[count2][count3][0]);
+            if (count3 == (n-1)) {
+                printf(" |%3d\n", m);
+            }
+        }
+    }
+
+
+    /*
+    while(morto == 0 || N_casas_abertas < n * m - z) {
+         Montagem da tabela: 
+        int a = 1;
+        for(a = 1; a <= )
+        
 
 
 
@@ -197,8 +238,8 @@ int main() {
 
 
     }
+    */
 
 
     return 0;
 }
-
