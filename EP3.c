@@ -156,7 +156,54 @@ void borda_inferior(int colunas) {
     printf("\n");
 }
 
+void mostra_tabuleiro_atualizado(int T[MMAX][NMAX], int m, int n) {
+    int count2 = 0;
+    int count3 = 0;
 
+    borda_superior(n);
+    for (count2 = 0; count2 < m; count2++) {
+        printf("%3d |", count2 + 1);
+        for (count3 = 0; count3 < n; count3++) {
+            if (casas_abertas[count2][count3] == 1) {
+                printf("%3d", T[count2][count3]);
+            } else {
+                if (casas_marcadas[count2][count3] == 1) {
+                    printf("  *");
+                } else {
+                    printf("  .");
+                }
+            }
+
+            if (count3 == (n-1)) {
+                printf(" |%3d\n", count2 + 1);
+            }
+        }
+    }
+    borda_inferior(n);
+}
+
+void mostra_tabuleiro_aberto(int T[MMAX][NMAX], int m, int n) {
+    int count2 = 0;
+    int count3 = 0;
+
+    borda_superior(n);
+    for (count2 = 0; count2 < m; count2++) {
+        printf("%3d |", count2 + 1);
+        for (count3 = 0; count3 < n; count3++) {
+            if  (T[count2][count3] == -1) {
+                printf("  @");
+            } else {
+                printf("%3d", T[count2][count3]);
+            }
+
+            if (count3 == (n-1)) {
+                printf(" |%3d\n", count2 + 1);
+            }
+        }
+    }
+    borda_inferior(n);
+
+}
 
 void calcula_adjacentes(int m, int n) {
     int count2 = 0;
@@ -290,10 +337,10 @@ void marcar(int i, int j, int z) {
 
 void desmarcar(int i, int j) {
     if(casas_abertas[i - 1][j - 1] == 1) {
-        printf("Sem efeito.");
+        printf("Sem efeito.\n");
     } else {
         if (casas_marcadas[i - 1][j - 1] == 0) {
-            printf("Sem efeito");
+            printf("Sem efeito.\n");
         } else {
             N_casas_marcadas -= 1;
             casas_marcadas[i - 1][j - 1] = 0;
@@ -303,7 +350,7 @@ void desmarcar(int i, int j) {
 
 void abrir(int i, int j) {
     if (casas_abertas[i][j] == 1) {
-        printf("Sem efeito.");
+        printf("Sem efeito.\n");
     } else {
         if (tabuleiro[i][j][CENTRO] == 1) {
             printf("BOOOOM! Voce acaba de pisar numa mina!\n");
@@ -439,36 +486,7 @@ int main() {
         int leitura_feita = 0;
 
         /* Mostra o tabuleiro atualizado */
-        borda_superior(n);
-        for (count2 = 0; count2 < m; count2++) {
-            printf("%3d |", count2 + 1);
-            for (count3 = 0; count3 < n; count3++) {
-                if (casas_abertas[count2][count3] == 1) {
-                    printf("%3d", T[count2][count3]);
-                } else {
-                    if (casas_marcadas[count2][count3] == 1) {
-                        printf("  *");
-                    } else {
-                        printf("  .");
-                    }
-                }
-
-                if (count3 == (n-1)) {
-                    printf(" |%3d\n", count2 + 1);
-                }
-            }
-        }
-        borda_inferior(n);
-
-        /* TESTE: MOSTRA MATRIZ CASAS ABERTAS */
-        for (count2 = 0; count2 < m; count2++) {
-            for (count3=0; count3 < n; count3++) {
-                printf("%4d", T[count2][count3]);
-                if (count3 == (n - 1)) {
-                    printf("\n");
-                }
-            }
-        }
+        mostra_tabuleiro_atualizado(T, m, n);
 
         printf("Proximo chute: ");
 
@@ -493,6 +511,13 @@ int main() {
         }
 
 
+    }
+
+    if (resultado_do_jogo == 1) {
+        printf("Parabéns! Você ganhou!!\n");
+        mostra_tabuleiro_aberto(T, m, n);
+    } else if (resultado_do_jogo == 2) {
+        mostra_tabuleiro_aberto(T, m, n);
     }
 
 
@@ -520,8 +545,14 @@ NA MATRIZ T
     (i, j) = -1, se tiver uma mina no local
     (i, j) = numero total de minas adjacentes, se não tiver uma mina no local clicado
 
-
-
-
+TESTE: MOSTRA MATRIZ CASAS ABERTAS
+for (count2 = 0; count2 < m; count2++) {
+    for (count3=0; count3 < n; count3++) {
+        printf("%4d", T[count2][count3]);
+        if (count3 == (n - 1)) {
+            printf("\n");
+        }
+    }
+}
 
 */
