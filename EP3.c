@@ -234,7 +234,7 @@ void calcula_adjacentes(int m, int n) {
                 tabuleiro[count2][count3][NORDESTE] = -1;
                 tabuleiro[count2][count3][NORTE] = -1;
                 tabuleiro[count2][count3][NOROESTE] = -1;
-            } else if (count2 == (n-1) && count3 == (n-1)) {
+            } else if (count2 == (m-1) && count3 == (n-1)) {
                 tabuleiro[count2][count3][NORTE] = tabuleiro[count2 - 1][count3][CENTRO];
                 tabuleiro[count2][count3][NOROESTE] = tabuleiro[count2 - 1][count3 - 1][CENTRO];
                 tabuleiro[count2][count3][OESTE] = tabuleiro[count2][count3 - 1][CENTRO];
@@ -244,7 +244,7 @@ void calcula_adjacentes(int m, int n) {
                 tabuleiro[count2][count3][SUDESTE] = -1;
                 tabuleiro[count2][count3][LESTE] = -1;
                 tabuleiro[count2][count3][NORDESTE] = -1;
-            } else if (count2 == (n-1) && count3 == 0) {
+            } else if (count2 == (m-1) && count3 == 0) {
                 tabuleiro[count2][count3][NORTE] = tabuleiro[count2 - 1][count3][CENTRO];
                 tabuleiro[count2][count3][NORDESTE] = tabuleiro[count2 - 1][count3 + 1][CENTRO];
                 tabuleiro[count2][count3][LESTE] = tabuleiro[count2][count3 + 1][CENTRO];
@@ -264,7 +264,7 @@ void calcula_adjacentes(int m, int n) {
                 tabuleiro[count2][count3][NOROESTE] = -1;
                 tabuleiro[count2][count3][NORTE] = -1;
                 tabuleiro[count2][count3][NORDESTE] = -1;
-            } else if (count2 != 0 && count2 != (n-1) && count3 == 0) {
+            } else if (count2 != 0 && count2 != (m-1) && count3 == 0) {
                 tabuleiro[count2][count3][NORTE] = tabuleiro[count2 - 1][count3][CENTRO];
                 tabuleiro[count2][count3][NORDESTE] = tabuleiro[count2 - 1][count3 + 1][CENTRO];
                 tabuleiro[count2][count3][LESTE] = tabuleiro[count2][count3 + 1][CENTRO];
@@ -274,7 +274,7 @@ void calcula_adjacentes(int m, int n) {
                 tabuleiro[count2][count3][SUDOESTE] = -1;
                 tabuleiro[count2][count3][OESTE] = -1;
                 tabuleiro[count2][count3][NOROESTE] = -1;
-            } else if (count2 == (n-1) && count3 != 0 && count3 != (n-1)) {
+            } else if (count2 == (m-1) && count3 != 0 && count3 != (n-1)) {
                 tabuleiro[count2][count3][OESTE] = tabuleiro[count2][count3 - 1][CENTRO];
                 tabuleiro[count2][count3][NOROESTE] = tabuleiro[count2 - 1][count3 - 1][CENTRO];
                 tabuleiro[count2][count3][NORTE] = tabuleiro[count2 - 1][count3][CENTRO];
@@ -284,7 +284,7 @@ void calcula_adjacentes(int m, int n) {
                 tabuleiro[count2][count3][SUDESTE] = -1;
                 tabuleiro[count2][count3][SUL] = -1;
                 tabuleiro[count2][count3][SUDOESTE] = -1;
-            } else if (count2 != 0 && count2 != (n - 1) && count3 == (n-1)) {
+            } else if (count2 != 0 && count2 != (m - 1) && count3 == (n-1)) {
                 tabuleiro[count2][count3][SUL] = tabuleiro[count2 + 1][count3][CENTRO];
                 tabuleiro[count2][count3][SUDOESTE] = tabuleiro[count2 + 1][count3 - 1][CENTRO];
                 tabuleiro[count2][count3][OESTE] = tabuleiro[count2][count3 - 1][CENTRO];
