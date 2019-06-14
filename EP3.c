@@ -81,8 +81,8 @@ void entrada(int *m, int *n, int *z, int *seed) {
 }
 
 void novo_seed(int *seed) {
-    srand(*seed + 1);
-    *seed = rand() % 12345 + 1;
+    srand(*seed);
+    *seed = rand() % 12345;
 }
 
 /* Retorna numero entre 1 e o maximo de linhas, inclusive */
@@ -130,6 +130,7 @@ int numero_de_adjacentes(int N, int NE, int E, int SE, int S, int SW, int W, int
 
 void borda_superior(int colunas) {
     int contagem = 1;
+    printf("\n");
     printf("     ");
     for(contagem = 1; contagem <= colunas; contagem++) {
         printf("%3d", contagem);
@@ -143,21 +144,19 @@ void borda_superior(int colunas) {
 
 }
 
-/*
-       1  2  3  4  5  6  7  8  9 10 11 12
-    +------------------------------------
-  1 |  .  .  .  .  .  .  .  .  .  .  .  .
-  2 |
-  3 |
-  4 |
-  5 |
-  6 |
-  7 |
-  8 |
-  9 |
- 10 |
-
-*/
+void borda_inferior(int colunas) {
+    int contagem = 1;
+    printf("    +");
+    for(contagem = 1; contagem <= colunas; contagem++) {
+        printf("---");
+    }
+    printf("-+\n");
+    printf("     ");
+    for(contagem = 1; contagem <= colunas; contagem++) {
+        printf("%3d", contagem);
+    }
+    printf("\n");
+}
 
 int main() {
     int m = 0; /*numero de linhas*/
@@ -169,7 +168,7 @@ int main() {
     int morto = 0;
     int N_casas_abertas = 0;
     int casas_abertas[90][90];
-    int N_casas_mercadas = 0;
+    int N_casas_marcadas = 0;
     int casas_marcadas[90][90];
 
     /* Variaveis de Loop */
@@ -196,30 +195,102 @@ int main() {
         }
     }
 
+    casas_abertas[1][3] = 1;
+    casas_abertas[2][4] = 1;
+    casas_abertas[3][1] = 1;
+    casas_marcadas[1][1] = 1;
+
     /* Gera o tabuleiro e suas solucoes */
     while (count <= z) {
         int posicao_linha = posicao_linha_aleatoria(m, &seed);
         int posicao_coluna = posicao_coluna_aleatoria(m, n, &seed);
 
         novo_seed(&seed);
-        if(tabuleiro[posicao_linha - 1][posicao_coluna - 1][0] != 1) {
-            tabuleiro[posicao_linha - 1][posicao_coluna - 1][0] = 1; 
+        if(tabuleiro[posicao_linha - 1][posicao_coluna - 1][CENTRO] != -1) {
+            tabuleiro[posicao_linha - 1][posicao_coluna - 1][CENTRO] = -1; 
             count++;           
         }
     }
 
-    /* O loop do jogo principal */
-    printf("Bem-vindo ao caca-Minas!\n");
-    borda_superior(n);
-
+    /* Calcula quais e quantas posições adjacentes possuem mina */
     for (count2 = 0; count2 < m; count2++) {
-        printf("%3d |", m);
         for (count3 = 0; count3 < n; count3++) {
-            printf("%3d", tabuleiro[count2][count3][0]);
-            if (count3 == (n-1)) {
-                printf(" |%3d\n", m);
+            if(count2 == 0 && count3 == 0) {
+                tabuleiro[count2][count3][LESTE] = tabuleiro[count2][count3 + 1][CENTRO];
+                tabuleiro[count2][count3][SUDESTE] = tabuleiro[count2 +1][count3 + 1][CENTRO];
+                tabuleiro[count2][count3][SUL] = tabuleiro[count2 + 1][count3][CENTRO];
+            } else if (count2 == 0 && count3 == (n-1)) {
+                tabuleiro[count2][count3][OESTE] = tabuleiro[count2][count3 - 1][CENTRO];
+                tabuleiro[count2][count3][SUDOESTE] = tabuleiro[count2 + 1][count3 - 1][CENTRO];
+                tabuleiro[count2][count3][SUL] = tabuleiro[count2 + 1][count3][CENTRO];
+            } else if (count2 == (n-1) && count3 == (n-1)) {
+                tabuleiro[count2][count3][NORTE] = tabuleiro[count2 - 1][count3][CENTRO];
+                tabuleiro[count2][count3][NOROESTE] = tabuleiro[count2 - 1][count3 - 1][CENTRO];
+                tabuleiro[count2][count3][OESTE] = tabuleiro[count2][count3 - 1][CENTRO];
+            } else if (count2 == (n-1) && count3 == 0) {
+                tabuleiro[count2][count3][NORTE] = tabuleiro[count2 - 1][count3][CENTRO];
+                tabuleiro[count2][count3][NORDESTE] = tabuleiro[count2 - 1][count3 + 1][CENTRO];
+                tabuleiro[count2][count3][LESTE] = tabuleiro[count2][count3 +][CENTRO];
+            } else if (count2 == 0 && count3 != 0) {
+                tabuleiro[count2][count3][LESTE] = tabuleiro[count2][count3 + 1][CENTRO];
+                tabuleiro[count2][count3][SUDESTE] = tabuleiro[count2 + 1][count3 + 1][CENTRO];
+                tabuleiro[count2][count3][SUL] = tabuleiro[count2 + 1][count3][CENTRO];
+                tabuleiro[count2][count3][SUDOESTE] = tabuleiro[count2 + 1][count3 - 1][CENTRO];
+                tabuleiro[count2][count3][OESTE] = tabuleiro[count2][count3 - 1][CENTRO];
             }
         }
+    }
+    
+
+    printf("Bem-vindo ao caca-Minas!\n");
+
+    while(1) {
+        char comando[100];
+        int leitura_feita = 0;
+
+        /* Mostra o tabuleiro atualizado */
+        borda_superior(n);
+        for (count2 = 0; count2 < m; count2++) {
+            printf("%3d |", count2 + 1);
+            for (count3 = 0; count3 < n; count3++) {
+                if (casas_abertas[count2][count3] == 1) {
+                    printf("%3d", tabuleiro[count2][count3][CENTRO]);
+                } else {
+                    if (casas_marcadas[count2][count3] == 1) {
+                        printf("  @");
+                    } else {
+                        printf("  .");
+                    }
+                }
+
+                if (count3 == (n-1)) {
+                    printf(" |%3d\n", count2 + 1);
+                }
+            }
+        }
+        borda_inferior(n);
+
+        /* TESTE: MOSTRA MATRIZ CASAS ABERTAS */
+        for (count2 = 0; count2 < m; count2++) {
+            for (count3=0; count3 < n; count3++) {
+                printf("%d", tabuleiro[count2][count3][CENTRO]);
+                if (count3 == (n - 1)) {
+                    printf("\n");
+                }
+            }
+        }
+
+        printf("Próximo chute: ");
+
+        while (leitura_feita == 0) {
+            int retorno = scanf("%s", comando);
+            if (retorno != 1) {
+                leitura_feita = 0;
+            } else {
+                leitura_feita = 1;
+            }
+        }
+
     }
 
 
@@ -243,3 +314,26 @@ int main() {
 
     return 0;
 }
+
+/*
+NA MATRIZ CASAS_ABERTAS
+    (i, j) = 1, se a casa estiver aberta
+    (i, j) = 0, se a casa estiver fechada
+
+NA MATRIZ CASAS_MARCADAS
+    (i, j) = 1, se a casa estiver marcada
+    (i, j) = 0, se a casa estiver desmarcada
+
+NA MATRIZ TABULEIRO
+    (i, j, CENTRO) = -1, se tiver bomba
+    (i, j, CENTRO) = número de bombas adjacentes, se não tiver bomba
+    (i, j, OUTRAS_DIRECOES) = 1, se tiver bomba na direcao adjacente
+    (i, j, OUTRAS_DIRECOES) = 0, se nao tiver bomba na direcao adjacente
+
+
+
+
+
+
+
+*/
