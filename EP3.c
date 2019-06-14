@@ -104,31 +104,6 @@ int posicao_coluna_aleatoria(int linhas, int colunas, int *seed) {
     return (numero / linhas) % colunas + 1;
 }
 
-/* A funcao abaixo nao sera usada provavelmente */
-
-int numero_de_adjacentes(int N, int NE, int E, int SE, int S, int SW, int W, int NW) {
-    int adjacentes = 0;
-
-    if (N == 1)
-        adjacentes++;
-    if (NE == 1)
-        adjacentes++;
-    if (E == 1) 
-        adjacentes++;
-    if (SE == 1)
-        adjacentes++;
-    if (S == 1)
-        adjacentes++;
-    if (SW == 1)
-        adjacentes++;
-    if (W == 1)
-        adjacentes++;
-    if (NW == 1)
-        adjacentes++;
-
-    return adjacentes;  
-}
-
 void borda_superior(int colunas) {
     int contagem = 1;
     printf("\n");
@@ -165,6 +140,7 @@ int main() {
     int z = 0; /*numero de minas*/
     int seed = 0;
     int tabuleiro[90][90][10];
+    int T[90][90];
 
     int morto = 0;
     int N_casas_abertas = 0;
@@ -287,7 +263,9 @@ int main() {
     for (count2 = 0; count2 < m; count2++) {
         for (count3 = 0; count3 < n; count3++) {
             if (tabuleiro[count2][count3][CENTRO] != -1) {
-                tabuleiro[count2][count3][CENTRO] = tabuleiro[count2][count3][TOTAL];
+                T[count2][count3] = tabuleiro[count2][count3][TOTAL];
+            } else {
+                T[count2][count3] = -1;
             }
         }
     }
@@ -305,7 +283,7 @@ int main() {
             printf("%3d |", count2 + 1);
             for (count3 = 0; count3 < n; count3++) {
                 if (casas_abertas[count2][count3] == 1) {
-                    printf("%3d", tabuleiro[count2][count3][CENTRO]);
+                    printf("%3d", T[count2][count3]);
                 } else {
                     if (casas_marcadas[count2][count3] == 1) {
                         printf("  @");
@@ -324,7 +302,7 @@ int main() {
         /* TESTE: MOSTRA MATRIZ CASAS ABERTAS */
         for (count2 = 0; count2 < m; count2++) {
             for (count3=0; count3 < n; count3++) {
-                printf("%4d", tabuleiro[count2][count3][CENTRO]);
+                printf("%4d", T[count2][count3]);
                 if (count3 == (n - 1)) {
                     printf("\n");
                 }
@@ -377,11 +355,14 @@ NA MATRIZ CASAS_MARCADAS
 
 NA MATRIZ TABULEIRO
     (i, j, CENTRO) = -1, se tiver bomba
-    (i, j, CENTRO) = número de bombas adjacentes, se não tiver bomba
+    (i, j, CENTRO) = 0, se não tiver bomba
     (i, j, OUTRAS_DIRECOES) = 1, se tiver bomba na direcao adjacente
     (i, j, OUTRAS_DIRECOES) = 0, se nao tiver bomba na direcao adjacente
+    (i, j, TOTAL) = numero total de bombas adjacentes
 
-
+NA MATRIZ T
+    (i, j) = -1, se tiver uma mina no local
+    (i, j) = numero total de minas adjacentes, se não tiver uma mina no local clicado
 
 
 
