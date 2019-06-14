@@ -38,6 +38,12 @@ que tem o mesmo efeito de scanf("%d", &entrada);
 #define TOTAL 9
 
 
+int tabuleiro[90][90][10];
+int N_casas_abertas = 0;
+int casas_abertas[90][90];
+int N_casas_marcadas = 0;
+int casas_marcadas[90][90];
+
 /*
     @brief Responsavel pelo loop de entrada
 */
@@ -104,6 +110,22 @@ int posicao_coluna_aleatoria(int linhas, int colunas, int *seed) {
     return (numero / linhas) % colunas + 1;
 }
 
+void zera_arrays(int m, int n) {
+    int zero1 = 0;
+    int zero2 = 0;
+    int zero3 = 0;
+
+    for (zero1 = 0; zero1 < m; zero1++) {
+        for (zero2 = 0; zero2 < n; zero2++) {
+            for (zero3 = 0; zero3 < 10; zero3++) {
+                tabuleiro[zero1][zero2][zero3] = 0;
+            }
+            casas_abertas[zero1][zero2] = 0;
+            casas_marcadas[zero1][zero2] = 0;
+        }
+    }
+}
+
 void borda_superior(int colunas) {
     int contagem = 1;
     printf("\n");
@@ -134,62 +156,10 @@ void borda_inferior(int colunas) {
     printf("\n");
 }
 
-int main() {
-    int m = 0; /*numero de linhas*/
-    int n = 0; /*numero de colunas*/
-    int z = 0; /*numero de minas*/
-    int seed = 0;
-    int tabuleiro[90][90][10];
-    int T[90][90];
-
-    int morto = 0;
-    int N_casas_abertas = 0;
-    int casas_abertas[90][90];
-    int N_casas_marcadas = 0;
-    int casas_marcadas[90][90];
-
-    /* Variaveis de Loop */
-    int zero1 = 0;
-    int zero2 = 0;
-    int zero3 = 0;
-
-    int count = 1;
+void calcula_adjacentes(int m, int n) {
     int count2 = 0;
     int count3 = 0;
-    /*********************/
 
-    entrada(&m, &n, &z, &seed);
-    printf("%d %d %d %d \n", m, n, z, seed);
-
-    /* Zera todo o vetor tabuleiro, casas_abertas e casas_marcadas */
-    for (zero1 = 0; zero1 < m; zero1++) {
-        for (zero2 = 0; zero2 < n; zero2++) {
-            for (zero3 = 0; zero3 < 10; zero3++) {
-                tabuleiro[zero1][zero2][zero3] = 0;
-            }
-            casas_abertas[zero1][zero2] = 0;
-            casas_marcadas[zero1][zero2] = 0;
-        }
-    }
-
-    casas_abertas[1][3] = 1;
-    casas_abertas[2][4] = 1;
-    casas_abertas[3][1] = 1;
-    casas_marcadas[1][1] = 1;
-
-    /* Gera o tabuleiro e suas solucoes */
-    while (count <= z) {
-        int posicao_linha = posicao_linha_aleatoria(m, &seed);
-        int posicao_coluna = posicao_coluna_aleatoria(m, n, &seed);
-
-        novo_seed(&seed);
-        if(tabuleiro[posicao_linha - 1][posicao_coluna - 1][CENTRO] != -1) {
-            tabuleiro[posicao_linha - 1][posicao_coluna - 1][CENTRO] = -1; 
-            count++;           
-        }
-    }
-
-    /* Calcula quais e quantas posições adjacentes possuem mina */
     for (count2 = 0; count2 < m; count2++) {
         for (count3 = 0; count3 < n; count3++) {
             int minas_adjacentes = 0;
@@ -255,11 +225,97 @@ int main() {
 
         }
     }
+}
 
-        /* Associa, como pedido, um valor no tabuleiro:
-            -1, se tem uma mina na posição;
-            numero de minas adjacentes, se não tem;
-        */
+void marcar(int i, int j, int z) {
+    if (casas_abertas[i - 1][j - 1] == 1) {
+        printf("Sem efeito.");
+    } else {
+        if (casas_marcadas[i - 1][j - 1] == 1) {
+            printf("Sem efeito.");
+        } else {
+            if (N_casas_marcadas == z) {
+                printf("Sem efeito");
+            } else {
+                N_casas_marcadas += 1;
+                casas_marcadas[i - 1][j - 1] = 1;
+            }
+        }
+    }
+}
+
+void desmarcar(int i, int j) {
+    if(casas_abertas[i - 1][j - 1] == 1) {
+        printf("Sem efeito.");
+    } else {
+        if (casas_marcadas[i - 1][j - 1] == 0) {
+            printf("Sem efeito");
+        } else {
+            N_casas_marcadas -= 1;
+            casas_marcadas[i - 1][j - 1] = 0;
+        }
+    }
+}
+
+void abrir(int i, int j) {
+    
+}
+
+int comando_de_entrada(char a[1], int i, int j, int linha_maxima, int coluna_maxima) {
+    if (i < 1 || i > linha_maxima || j < 1 || j > coluna_maxima) {
+        return 0;
+    } else {
+        if (a[0] == 'A' || a[0] == 'a') {
+            return 1;
+        } if (a[0] == 'M' || a[0] == 'm') {
+            return 2;
+        } if (a[0] == 'D' || a[0] == 'd') {
+            return 3;
+        }
+        return 0;
+    }
+}
+
+int main() {
+    int m = 0; /*numero de linhas*/
+    int n = 0; /*numero de colunas*/
+    int z = 0; /*numero de minas*/
+    int seed = 0;
+    int T[90][90];
+
+    int morto = 0;
+
+    /* Variaveis de Loop */
+    int count = 1;
+    int count2 = 0;
+    int count3 = 0;
+    /*********************/
+
+    entrada(&m, &n, &z, &seed);
+    printf("%d %d %d %d \n", m, n, z, seed);
+
+    /* Zera todo o array tabuleiro, casas_abertas e casas_marcadas */
+    zera_arrays(m, n);
+
+    /* Gera o tabuleiro e suas solucoes */
+    while (count <= z) {
+        int posicao_linha = posicao_linha_aleatoria(m, &seed);
+        int posicao_coluna = posicao_coluna_aleatoria(m, n, &seed);
+
+        novo_seed(&seed);
+        if(tabuleiro[posicao_linha - 1][posicao_coluna - 1][CENTRO] != -1) {
+            tabuleiro[posicao_linha - 1][posicao_coluna - 1][CENTRO] = -1; 
+            count++;           
+        }
+    }
+
+    /* Calcula quais e quantas posições adjacentes possuem mina */
+    calcula_adjacentes(m, n);
+
+    /* Associa, como pedido, um valor no tabuleiro:
+        -1, se tem uma mina na posição;
+        numero de minas adjacentes, se não tem;
+    */
     for (count2 = 0; count2 < m; count2++) {
         for (count3 = 0; count3 < n; count3++) {
             if (tabuleiro[count2][count3][CENTRO] != -1) {
@@ -271,10 +327,13 @@ int main() {
     }
     
 
-    printf("Bem-vindo ao caca-Minas!\n");
+    printf("Bem-vindo ao Caca-Minas!\n");
 
     while(1) {
-        char comando[100];
+        char comando[1];
+
+        int linha;
+        int coluna;
         int leitura_feita = 0;
 
         /* Mostra o tabuleiro atualizado */
@@ -312,13 +371,24 @@ int main() {
         printf("Próximo chute: ");
 
         while (leitura_feita == 0) {
-            int retorno = scanf("%s", comando);
-            if (retorno != 1) {
-                leitura_feita = 0;
-            } else {
+            int retorno = scanf("%s %d %d", comando, &linha, &coluna);
+            if (retorno == 3 && comando_de_entrada(comando, linha, coluna, m, n) != 0) {
                 leitura_feita = 1;
+            } else {
+                leitura_feita = 0;
             }
         }
+
+        if (comando_de_entrada(comando, linha, coluna, m, n) == 1) {
+            /* Abre */
+        } else if (comando_de_entrada(comando, linha, coluna, m, n) == 2) {
+            marcar(linha, coluna, z);
+            printf("Por enquanto: %d/%d marcadas, %d livres", N_casas_marcadas, z, (m * n - N_casas_abertas));
+        } else if (comando_de_entrada(comando, linha, coluna, m, n) == 3) {
+            desmarcar(linha, coluna);
+            printf("Por enquanto: %d/%d marcadas, %d livres", N_casas_marcadas, z, (m * n - N_casas_abertas));
+        }
+
 
     }
 
