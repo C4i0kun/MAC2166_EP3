@@ -35,6 +35,7 @@ que tem o mesmo efeito de scanf("%d", &entrada);
 #define SUDOESTE 6
 #define OESTE 7
 #define NOROESTE 8
+#define TOTAL 9
 
 
 /*
@@ -163,7 +164,7 @@ int main() {
     int n = 0; /*numero de colunas*/
     int z = 0; /*numero de minas*/
     int seed = 0;
-    int tabuleiro[90][90][9];
+    int tabuleiro[90][90][10];
 
     int morto = 0;
     int N_casas_abertas = 0;
@@ -187,7 +188,7 @@ int main() {
     /* Zera todo o vetor tabuleiro, casas_abertas e casas_marcadas */
     for (zero1 = 0; zero1 < m; zero1++) {
         for (zero2 = 0; zero2 < n; zero2++) {
-            for (zero3 = 0; zero3 < 9; zero3++) {
+            for (zero3 = 0; zero3 < 10; zero3++) {
                 tabuleiro[zero1][zero2][zero3] = 0;
             }
             casas_abertas[zero1][zero2] = 0;
@@ -215,6 +216,9 @@ int main() {
     /* Calcula quais e quantas posições adjacentes possuem mina */
     for (count2 = 0; count2 < m; count2++) {
         for (count3 = 0; count3 < n; count3++) {
+            int minas_adjacentes = 0;
+            int loop = 1;
+
             if(count2 == 0 && count3 == 0) {
                 tabuleiro[count2][count3][LESTE] = tabuleiro[count2][count3 + 1][CENTRO];
                 tabuleiro[count2][count3][SUDESTE] = tabuleiro[count2 +1][count3 + 1][CENTRO];
@@ -230,13 +234,60 @@ int main() {
             } else if (count2 == (n-1) && count3 == 0) {
                 tabuleiro[count2][count3][NORTE] = tabuleiro[count2 - 1][count3][CENTRO];
                 tabuleiro[count2][count3][NORDESTE] = tabuleiro[count2 - 1][count3 + 1][CENTRO];
-                tabuleiro[count2][count3][LESTE] = tabuleiro[count2][count3 +][CENTRO];
-            } else if (count2 == 0 && count3 != 0) {
+                tabuleiro[count2][count3][LESTE] = tabuleiro[count2][count3 + 1][CENTRO];
+            } else if (count2 == 0 && count3 != 0 && count3 != (n-1)) {
                 tabuleiro[count2][count3][LESTE] = tabuleiro[count2][count3 + 1][CENTRO];
                 tabuleiro[count2][count3][SUDESTE] = tabuleiro[count2 + 1][count3 + 1][CENTRO];
                 tabuleiro[count2][count3][SUL] = tabuleiro[count2 + 1][count3][CENTRO];
                 tabuleiro[count2][count3][SUDOESTE] = tabuleiro[count2 + 1][count3 - 1][CENTRO];
                 tabuleiro[count2][count3][OESTE] = tabuleiro[count2][count3 - 1][CENTRO];
+            } else if (count2 != 0 && count2 != (n-1) && count3 == 0) {
+                tabuleiro[count2][count3][NORTE] = tabuleiro[count2 - 1][count3][CENTRO];
+                tabuleiro[count2][count3][NORDESTE] = tabuleiro[count2 - 1][count3 + 1][CENTRO];
+                tabuleiro[count2][count3][LESTE] = tabuleiro[count2][count3 + 1][CENTRO];
+                tabuleiro[count2][count3][SUDESTE] = tabuleiro[count2 + 1][count3 + 1][CENTRO];
+                tabuleiro[count2][count3][SUL] = tabuleiro[count2 + 1][count3][CENTRO];
+            } else if (count2 == (n-1) && count3 != 0 && count3 != (n-1)) {
+                tabuleiro[count2][count3][OESTE] = tabuleiro[count2][count3 - 1][CENTRO];
+                tabuleiro[count2][count3][NOROESTE] = tabuleiro[count2 - 1][count3 - 1][CENTRO];
+                tabuleiro[count2][count3][NORTE] = tabuleiro[count2 - 1][count3][CENTRO];
+                tabuleiro[count2][count3][NORDESTE] = tabuleiro[count2 - 1][count3 + 1][CENTRO];
+                tabuleiro[count2][count3][LESTE] = tabuleiro[count2][count3 + 1][CENTRO];
+            } else if (count2 != 0 && count2 != (n - 1) && count3 == (n-1)) {
+                tabuleiro[count2][count3][SUL] = tabuleiro[count2 + 1][count3][CENTRO];
+                tabuleiro[count2][count3][SUDOESTE] = tabuleiro[count2 + 1][count3 - 1][CENTRO];
+                tabuleiro[count2][count3][OESTE] = tabuleiro[count2][count3 - 1][CENTRO];
+                tabuleiro[count2][count3][NOROESTE] = tabuleiro[count2 - 1][count3 - 1][CENTRO];
+                tabuleiro[count2][count3][NORTE] = tabuleiro[count2 - 1][count3][CENTRO];
+            } else {
+                tabuleiro[count2][count3][NORTE] = tabuleiro[count2 - 1][count3][CENTRO];
+                tabuleiro[count2][count3][NORDESTE] = tabuleiro[count2 - 1][count3 + 1][CENTRO];
+                tabuleiro[count2][count3][LESTE] = tabuleiro[count2][count3 + 1][CENTRO];
+                tabuleiro[count2][count3][SUDESTE] = tabuleiro[count2 + 1][count3 + 1][CENTRO];
+                tabuleiro[count2][count3][SUL] = tabuleiro[count2 + 1][count3][CENTRO];
+                tabuleiro[count2][count3][SUDOESTE] = tabuleiro[count2 + 1][count3 - 1][CENTRO];
+                tabuleiro[count2][count3][OESTE] = tabuleiro[count2][count3 - 1][CENTRO];
+                tabuleiro[count2][count3][NOROESTE] = tabuleiro[count2 - 1][count3 - 1][CENTRO];
+            }
+
+            while (loop < 9) {
+                minas_adjacentes += tabuleiro[count2][count3][loop];
+                loop++;
+            }
+
+            tabuleiro[count2][count3][TOTAL] = (-1) * minas_adjacentes;
+
+        }
+    }
+
+        /* Associa, como pedido, um valor no tabuleiro:
+            -1, se tem uma mina na posição;
+            numero de minas adjacentes, se não tem;
+        */
+    for (count2 = 0; count2 < m; count2++) {
+        for (count3 = 0; count3 < n; count3++) {
+            if (tabuleiro[count2][count3][CENTRO] != -1) {
+                tabuleiro[count2][count3][CENTRO] = tabuleiro[count2][count3][TOTAL];
             }
         }
     }
@@ -273,7 +324,7 @@ int main() {
         /* TESTE: MOSTRA MATRIZ CASAS ABERTAS */
         for (count2 = 0; count2 < m; count2++) {
             for (count3=0; count3 < n; count3++) {
-                printf("%d", tabuleiro[count2][count3][CENTRO]);
+                printf("%4d", tabuleiro[count2][count3][CENTRO]);
                 if (count3 == (n - 1)) {
                     printf("\n");
                 }
