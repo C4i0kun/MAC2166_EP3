@@ -87,25 +87,18 @@ void entrada(int *m, int *n, int *z, int *seed) {
     *seed = d;
 }
 
-void novo_seed(int *seed) {
-    srand(*seed);
-    *seed = rand() % 12345;
-}
-
 /* Retorna numero entre 1 e o maximo de linhas, inclusive */
-int posicao_linha_aleatoria(int linhas, int *seed) {
+int posicao_linha_aleatoria(int linhas) {
     int numero = 0;
 
-    srand(*seed);
     numero = rand();
     return numero % linhas + 1;
 }
 
 /* Retorna numero entre 1 e o maximo de colunas, inclusive */
-int posicao_coluna_aleatoria(int linhas, int colunas, int *seed) {
+int posicao_coluna_aleatoria(int linhas, int colunas) {
     int numero = 0;
 
-    srand(*seed);
     numero = rand();
     return (numero / linhas) % colunas + 1;
 }
@@ -442,16 +435,16 @@ int main() {
 
     entrada(&m, &n, &z, &seed);
     printf("%d %d %d %d \n", m, n, z, seed);
+    srand(seed);
 
     /* Zera todo o array tabuleiro, casas_abertas e casas_marcadas */
     zera_arrays(m, n);
 
     /* Gera o tabuleiro e suas solucoes */
     while (count <= z) {
-        int posicao_linha = posicao_linha_aleatoria(m, &seed);
-        int posicao_coluna = posicao_coluna_aleatoria(m, n, &seed);
+        int posicao_linha = posicao_linha_aleatoria(m);
+        int posicao_coluna = posicao_coluna_aleatoria(m, n);
 
-        novo_seed(&seed);
         if(tabuleiro[posicao_linha - 1][posicao_coluna - 1][CENTRO] != 1) {
             tabuleiro[posicao_linha - 1][posicao_coluna - 1][CENTRO] = 1; 
             count++;           
