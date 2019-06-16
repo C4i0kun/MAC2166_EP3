@@ -45,7 +45,8 @@ int N_casas_marcadas = 0;
 int casas_marcadas[90][90];
 
 /*
-    @brief Responsavel pelo loop de entrada
+    
+    Responsavel pelo loop de entrada
 */
 
 void entrada(int *m, int *n, int *z, int *seed) {
@@ -103,6 +104,7 @@ int posicao_coluna_aleatoria(int linhas, int colunas) {
     return (numero / linhas) % colunas + 1;
 }
 
+/* Zera todo o array tabuleiro, casas_abertas e casas_marcadas */
 void zera_arrays(int m, int n) {
     int zero1 = 0;
     int zero2 = 0;
@@ -198,6 +200,7 @@ void mostra_tabuleiro_aberto(int T[MMAX][NMAX], int m, int n) {
 
 }
 
+/* Calcula quais e quantas posições adjacentes possuem mina */
 void calcula_adjacentes(int m, int n) {
     int count2 = 0;
     int count3 = 0;
@@ -313,13 +316,13 @@ void calcula_adjacentes(int m, int n) {
 
 void marcar(int i, int j, int z) {
     if (casas_abertas[i - 1][j - 1] == 1) {
-        printf("Sem efeito.");
+        printf("Sem efeito.\n");
     } else {
         if (casas_marcadas[i - 1][j - 1] == 1) {
-            printf("Sem efeito.");
+            printf("Sem efeito.\n");
         } else {
             if (N_casas_marcadas == z) {
-                printf("Sem efeito");
+                printf("Sem efeito.\n");
             } else {
                 N_casas_marcadas += 1;
                 casas_marcadas[i - 1][j - 1] = 1;
@@ -437,7 +440,6 @@ int main() {
     printf("%d %d %d %d \n", m, n, z, seed);
     srand(seed);
 
-    /* Zera todo o array tabuleiro, casas_abertas e casas_marcadas */
     zera_arrays(m, n);
 
     /* Gera o tabuleiro e suas solucoes */
@@ -451,7 +453,6 @@ int main() {
         }
     }
 
-    /* Calcula quais e quantas posições adjacentes possuem mina */
     calcula_adjacentes(m, n);
 
     /* Associa, como pedido, um valor no tabuleiro:
@@ -478,13 +479,12 @@ int main() {
         int coluna;
         int leitura_feita = 0;
 
-        /* Mostra o tabuleiro atualizado */
         mostra_tabuleiro_atualizado(T, m, n);
 
         printf("Proximo chute: ");
 
         while (leitura_feita == 0) {
-            int retorno = scanf("%s %d %d", comando, &linha, &coluna);
+            int retorno = scanf("%c %d %d", comando, &linha, &coluna);
             if (retorno == 3 && comando_de_entrada(comando, linha, coluna, m, n) != 0) {
                 leitura_feita = 1;
             } else {
@@ -537,15 +537,5 @@ NA MATRIZ TABULEIRO
 NA MATRIZ T
     (i, j) = -1, se tiver uma mina no local
     (i, j) = numero total de minas adjacentes, se não tiver uma mina no local clicado
-
-TESTE: MOSTRA MATRIZ CASAS ABERTAS
-for (count2 = 0; count2 < m; count2++) {
-    for (count3=0; count3 < n; count3++) {
-        printf("%4d", T[count2][count3]);
-        if (count3 == (n - 1)) {
-            printf("\n");
-        }
-    }
-}
 
 */
